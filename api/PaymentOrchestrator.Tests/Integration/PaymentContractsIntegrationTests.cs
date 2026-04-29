@@ -15,20 +15,24 @@ public static class PaymentContractsIntegrationTests
     {
         var solutionDirectory = FindSolutionDirectory();
         var processes = new List<ManagedProcess>();
+        ManagedProcess? fastPay = null;
+        ManagedProcess? securePay = null;
 
         try
         {
-            processes.Add(StartService(
+            fastPay = StartService(
                 "FastPay",
                 solutionDirectory,
                 Path.Combine(solutionDirectory, "FastPay.Api", "FastPay.Api.csproj"),
-                FastPayUrl));
+                FastPayUrl);
+            processes.Add(fastPay);
 
-            processes.Add(StartService(
+            securePay = StartService(
                 "SecurePay",
                 solutionDirectory,
                 Path.Combine(solutionDirectory, "SecurePay.Api", "SecurePay.Api.csproj"),
-                SecurePayUrl));
+                SecurePayUrl);
+            processes.Add(securePay);
 
             processes.Add(StartService(
                 "PaymentOrchestrator",
@@ -54,6 +58,8 @@ public static class PaymentContractsIntegrationTests
             await FastPayReceivesExpectedPayloadAndReturnsExpectedShapeAsync(httpClient);
             await SecurePayReceivesExpectedPayloadAndReturnsExpectedShapeAsync(httpClient);
             await OrchestratorReturnsExpectedUserResponseAsync(httpClient);
+            await OrchestratorFallsBackToFastPayWhenSecurePayIsUnavailableAsync(httpClient, securePay);
+            await OrchestratorReturnsServiceUnavailableWhenBothProvidersFailAsync(httpClient, fastPay);
         }
         finally
         {
@@ -138,6 +144,54 @@ public static class PaymentContractsIntegrationTests
         AssertDecimal(root, "netAmount", 116.49m);
 
         Console.WriteLine("PaymentOrchestrator response: OK");
+    }
+
+    private static async Task OrchestratorFallsBackToFastPayWhenSecurePayIsUnavailableAsync(
+        HttpClient httpClient,
+        ManagedProcess securePay)
+    {
+        securePay.Dispose();
+        await Task.Delay(1000);
+
+        using var response = await httpClient.PostAsJsonAsync($"{OrchestratorUrl}/payments", new
+        {
+            amount = 120.50m,
+            currency = "BRL"
+        });
+
+        response.EnsureSuccessStatusCode();
+        using var document = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+        var root = document.RootElement;
+
+        AssertHasString(root, "externalId", value => value.StartsWith("FP-", StringComparison.Ordinal));
+        AssertString(root, "status", "approved");
+        AssertString(root, "provider", "FastPay");
+        AssertDecimal(root, "grossAmount", 120.50m);
+        AssertDecimal(root, "fee", 4.21m);
+        AssertDecimal(root, "netAmount", 116.29m);
+
+        Console.WriteLine("PaymentOrchestrator fallback: OK");
+    }
+
+    private static async Task OrchestratorReturnsServiceUnavailableWhenBothProvidersFailAsync(
+        HttpClient httpClient,
+        ManagedProcess fastPay)
+    {
+        fastPay.Dispose();
+        await Task.Delay(1000);
+
+        using var response = await httpClient.PostAsJsonAsync($"{OrchestratorUrl}/payments", new
+        {
+            amount = 120.50m,
+            currency = "BRL"
+        });
+
+        if (response.StatusCode != System.Net.HttpStatusCode.ServiceUnavailable)
+        {
+            throw new InvalidOperationException("Expected PaymentOrchestrator to return 503 when both providers fail.");
+        }
+
+        Console.WriteLine("PaymentOrchestrator double failure: OK");
     }
 
     private static ManagedProcess StartService(
@@ -282,6 +336,7 @@ public static class PaymentContractsIntegrationTests
     {
         private readonly string _name;
         private readonly Process _process;
+        private bool _disposed;
 
         public ManagedProcess(string name, Process process)
         {
@@ -291,6 +346,13 @@ public static class PaymentContractsIntegrationTests
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
             if (_process.HasExited)
             {
                 _process.Dispose();

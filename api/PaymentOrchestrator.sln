@@ -17,7 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurePay.Api", "SecurePay.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PaymentOrchestrator", "PaymentOrchestrator", "{1A171F80-E7DF-4F9B-85BB-E300B7BF9188}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentOrchestrator.Tests", "PaymentOrchestrator.Tests\PaymentOrchestrator.Tests.csproj", "{3B2A0B36-2218-46C6-838C-FE7C7F2E0771}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentOrchestrator.IntegrationTests", "PaymentOrchestrator.Tests\PaymentOrchestrator.IntegrationTests.csproj", "{3B2A0B36-2218-46C6-838C-FE7C7F2E0771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Orchestrator.UnitTests", "Payment.Orchestrator.UnitTests\Payment.Orchestrator.UnitTests.csproj", "{E5CDA1F4-1141-165A-358B-2C921617843B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,18 @@ Global
 		{3B2A0B36-2218-46C6-838C-FE7C7F2E0771}.Release|x64.Build.0 = Release|Any CPU
 		{3B2A0B36-2218-46C6-838C-FE7C7F2E0771}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B2A0B36-2218-46C6-838C-FE7C7F2E0771}.Release|x86.Build.0 = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Debug|x86.Build.0 = Debug|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|x64.Build.0 = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|x86.ActiveCfg = Release|Any CPU
+		{E5CDA1F4-1141-165A-358B-2C921617843B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,5 +136,10 @@ Global
 		{1C295BC0-171E-4B3A-B8C3-E9C12CE6950E} = {1A171F80-E7DF-4F9B-85BB-E300B7BF9188}
 		{0883F492-F432-4038-875C-193BE10246F0} = {1A171F80-E7DF-4F9B-85BB-E300B7BF9188}
 		{01D48C1F-50F9-486A-88ED-3319F041B174} = {1A171F80-E7DF-4F9B-85BB-E300B7BF9188}
+		{3B2A0B36-2218-46C6-838C-FE7C7F2E0771} = {1A171F80-E7DF-4F9B-85BB-E300B7BF9188}
+		{E5CDA1F4-1141-165A-358B-2C921617843B} = {1A171F80-E7DF-4F9B-85BB-E300B7BF9188}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D446805B-17C9-4FA0-8FD4-4593DB486AF6}
 	EndGlobalSection
 EndGlobal

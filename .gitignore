@@ -13,10 +13,13 @@
 /api/SecurePay.Api/bin
 /api/PaymentOrchestrator.Tests/obj
 /api/PaymentOrchestrator.Tests/bin
+/api/Payment.Orchestrator.UnitTests/obj
+/api/Payment.Orchestrator.UnitTests/bin
 /.serena
 /.build
 /.vs
 /api/.vs
+/api/build-api.log
 *.csproj.user
 api/PaymentOrchestrator.Api/appsettings.json
 api/PaymentOrchestrator.Api/appsettings.Development.json
