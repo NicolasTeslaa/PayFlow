@@ -4,6 +4,12 @@ PayFlow e uma solucao full stack para orquestracao de pagamentos entre provedore
 
 O projeto foi desenvolvido como uma demonstracao de arquitetura orientada a dominio e adaptadores, mantendo o caso de uso principal independente dos contratos especificos de `FastPay` e `SecurePay`.
 
+## Motivação por trás da Arquitetura adotada:
+
+O objetivo principal foi atender os requisitos sem recorrer a over engineering, ou seja, apliquei apenas o que foi solicitado no escopo, sem features que não serão utilizadas, o ideal seria que o sistema fosse contruido com base em uma arquitetura orientada a eventos com message broker usando idepotencia e outbox para garantir a consistencia eventual das transações.
+
+Decidi construir uma arquitetura orientada a dominio, com o SOLID, Clean Code e alguns conceitos como Ports, Adapters e Factorys dessa forma podemos aumentar a quantidade de provedores de pagamento sem a necessidade de muitas alterações devido ao baixo acoplamento, com esses 3 conceitos, nós conseguimos botar em prática melhor o conceito de Open Closed do SOLID
+
 ## Subindo com Docker Compose
 
 Com Docker instalado, suba toda a solucao com um unico comando:
