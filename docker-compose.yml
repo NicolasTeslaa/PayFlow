@@ -1,0 +1,83 @@
+services:
+  fastpay-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: FastPay.Api/FastPay.Api.csproj
+    image: payflow-fastpay-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      APP_DLL: FastPay.Api.dll
+    ports:
+      - "5271:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  securepay-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: SecurePay.Api/SecurePay.Api.csproj
+    image: payflow-securepay-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      APP_DLL: SecurePay.Api.dll
+    ports:
+      - "5272:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  payment-orchestrator-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: PaymentOrchestrator.Api/PaymentOrchestrator.Api.csproj
+    image: payflow-payment-orchestrator-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      APP_DLL: PaymentOrchestrator.Api.dll
+      ConnectionStrings__Payments: payflow
+      PaymentProviders__Endpoints__FastPay: http://fastpay-api:8080
+      PaymentProviders__Endpoints__SecurePay: http://securepay-api:8080
+      PaymentProviders__Availability__FastPay: "true"
+      PaymentProviders__Availability__SecurePay: "true"
+    ports:
+      - "5162:8080"
+    depends_on:
+      fastpay-api:
+        condition: service_healthy
+      securepay-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:5162
+    image: payflow-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      payment-orchestrator-api:
+        condition: service_healthy

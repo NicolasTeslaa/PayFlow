@@ -4,6 +4,28 @@ PayFlow e uma solucao full stack para orquestracao de pagamentos entre provedore
 
 O projeto foi desenvolvido como uma demonstracao de arquitetura orientada a dominio e adaptadores, mantendo o caso de uso principal independente dos contratos especificos de `FastPay` e `SecurePay`.
 
+## Subindo com Docker Compose
+
+Com Docker instalado, suba toda a solucao com um unico comando:
+
+```powershell
+cd C:\repo\PayFlow
+docker compose up --build
+```
+
+Depois acesse:
+
+- Frontend: `http://localhost:8080`
+- PaymentOrchestrator API: `http://localhost:5162`
+- FastPay API: `http://localhost:5271`
+- SecurePay API: `http://localhost:5272`
+
+Para parar e remover os containers:
+
+```powershell
+docker compose down
+```
+
 ## Escopo da solucao
 
 A solucao cobre o fluxo principal de processamento de pagamentos:
@@ -222,7 +244,7 @@ Tambem ha um teste de integracao em `PaymentOrchestrator.Tests` que sobe os serv
 ## Endpoint principal
 
 ```http
-POST https://localhost:7267/payments
+POST http://localhost:5162/payments
 Content-Type: application/json
 
 {
@@ -246,6 +268,13 @@ Resposta:
 ```
 
 ## Como executar
+
+### Docker Compose
+
+O comando principal para rodar tudo em Docker esta no inicio deste README. No Docker Compose, o frontend e compilado com `VITE_API_BASE_URL=http://localhost:5162`, enquanto o `PaymentOrchestrator.Api` acessa os provedores pela rede interna do Compose:
+
+- `http://fastpay-api:8080`
+- `http://securepay-api:8080`
 
 ### Backend
 
